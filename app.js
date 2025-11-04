@@ -160,3 +160,31 @@
     });
 
     updateFileName();
+
+async function loadDemo() {
+            try {
+                const response = await fetch('demo.svg');
+                if (!response.ok) {
+                    alert('Demo SVG file not found. Make sure demo.svg exists in the same directory.');
+                    return;
+                }
+                const svgText = await response.text();
+
+                // Create a fake File object to simulate file upload
+                const blob = new Blob([svgText], { type: 'image/svg+xml' });
+                const file = new File([blob], 'demo.svg', { type: 'image/svg+xml' });
+
+                // Simulate file input change
+                const fileInput = document.getElementById('svg-upload');
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+
+                // Trigger the change event
+                const event = new Event('change', { bubbles: true });
+                fileInput.dispatchEvent(event);
+
+            } catch (error) {
+                alert('Error loading demo SVG: ' + error.message);
+            }
+        }
