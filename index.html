@@ -177,6 +177,7 @@
                     <h3>Upload SVG</h3>
                     <input type="file" id="svg-upload" accept=".svg">
                     <label for="svg-upload" class="file-upload-btn">Choose SVG File</label>
+                    <p>If you don't have an SVG file yet, you can quickly make one with <a href="https://picsvg.com" target="_blank" rel="noopener" style="color: #1e90ff;">picsvg.com</a>.</p>
                 </div>
 
                 <div class="control-group">
@@ -212,6 +213,7 @@
                     <input type="color" id="stroke-color" value="#ffffff">
 
                     <button class="file-upload-btn button" onclick="replayAnimation()">Replay Animation</button>
+                    <button class="file-upload-btn button" id="download-html-btn" style="margin-top: 10px;">Download HTML File</button>
                 </div>
 
                 <footer style="text-align: center; padding: 10px;">
@@ -227,92 +229,7 @@
         </div>
     </div>
 
-    <script>
-        const svgUpload = document.getElementById("svg-upload");
-        const transitionTimeSelect = document.getElementById("transition-time");
-        const strokeWidthSelect = document.getElementById("stroke-width");
-        const strokeColorInput = document.getElementById("stroke-color");
-        const svgContainer = document.getElementById("svg-container");
-        const bgColorSelect = document.getElementById("bg-color");
-
-        let currentSvgContent = null;
-
-        // Update background color based on the "selected" option
-        window.onload = function() {
-            updateBackgroundColor(); // Apply background color based on "selected"
-        }
-
-        function updateFileName() {
-            const fileUploadBtn = document.querySelector('.file-upload-btn');
-            const fileName = svgUpload.files[0]?.name || 'Choose SVG File';
-            fileUploadBtn.textContent = fileName;
-        }
-
-        // Event Listeners for Auto-Update on Change
-        svgUpload.addEventListener("change", handleFileUpload);
-        transitionTimeSelect.addEventListener("change", updateAnimation);
-        strokeWidthSelect.addEventListener("change", updateAnimation);
-        strokeColorInput.addEventListener("change", updateAnimation);
-        bgColorSelect.addEventListener("change", updateBackgroundColor);
-
-        function handleFileUpload(e) {
-            const file = e.target.files[0];
-            updateFileName();
-
-            if (file && file.type === "image/svg+xml") {
-                const reader = new FileReader();
-                reader.onload = function () {
-                    currentSvgContent = reader.result;
-                    updateAnimation();
-                };
-                reader.readAsText(file);
-            } else {
-                alert("Please upload a valid SVG file.");
-            }
-        }
-
-        function updateAnimation() {
-            if (!currentSvgContent) return;
-
-            const duration = parseFloat(transitionTimeSelect.value);
-            const strokeWidth = strokeWidthSelect.value;
-            const strokeColor = strokeColorInput.value;
-
-            svgContainer.innerHTML = currentSvgContent;
-            const svg = svgContainer.querySelector('svg');
-
-            if (!svg) return;
-
-            svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '100%');
-            svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-
-            const paths = svg.querySelectorAll('path');
-            paths.forEach(path => {
-                const length = path.getTotalLength();
-                path.style.stroke = strokeColor;
-                path.style.strokeWidth = strokeWidth + "px";
-                path.style.strokeDasharray = length;
-                path.style.strokeDashoffset = length;
-                path.getBoundingClientRect();
-                path.style.transition = `stroke-dashoffset ${duration}s ease-in-out`;
-                path.style.strokeDashoffset = '0';
-            });
-        }
-
-        function updateBackgroundColor() {
-            const selectedColor = bgColorSelect.value;
-            svgContainer.style.background = selectedColor;  // This will apply the selected color as background
-        }
-
-        function replayAnimation() {
-            if (currentSvgContent) {
-                updateAnimation();
-            }
-        }
-
-        updateFileName();
-    </script>
+    <script src="app.js"></script>
 </body>
 
 </html>
